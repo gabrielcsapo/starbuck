@@ -4,8 +4,11 @@ import PropTypes from 'prop-types';
 class DependenciesTable extends React.Component {
 	constructor(props) {
 		super(props);
+
+		const { selectedTab } = props;
+
 		this.state = {
-			selected: 'dependencies',
+			selected: selectedTab || 'dependencies',
 			sort: 'name',
 			direction: 1
 		};
@@ -89,7 +92,8 @@ DependenciesTable.propTypes = {
 	changeTab: PropTypes.function,
 	dependencies: PropTypes.object,
 	devDependencies: PropTypes.object,
-	peerDependencies: PropTypes.object
+	peerDependencies: PropTypes.object,
+	selectedTab: PropTypes.string
 };
 
 export default DependenciesTable;

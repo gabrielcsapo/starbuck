@@ -34,11 +34,15 @@ test('starbuck', (t) => {
 				}
 			}, {
 				npm: 'http://registry.npmjs.org'
-			}, (err, results) => {
-				t.notOk(err);
-				t.deepEqual(Object.keys(results).sort(), ['dependencies', 'devDependencies', 'peerDependencies']);
-				t.end();
-			});
+			})
+				.then((results) => {
+					t.deepEqual(Object.keys(results).sort(), ['dependencies', 'devDependencies', 'peerDependencies']);
+					t.end();
+				})
+				.catch((error) => {
+					t.notOk(error);
+					t.fail();
+				});
 		});
 
 	});

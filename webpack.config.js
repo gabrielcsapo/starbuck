@@ -1,13 +1,16 @@
 const webpack = require('webpack');
 const path = require('path');
 
+const MinifyPlugin = require('babel-minify-webpack-plugin');
+
 module.exports = {
 	entry: {
-		build: path.resolve(__dirname, 'src', 'app.js')
+		app: './src/app.js',
+		vendor: ['react', 'react-dom', 'react-router-dom', 'prop-types'],
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: 'build.js'
+		filename: 'bundle.js'
 	},
 	devServer: {
 		proxy: {
@@ -53,6 +56,8 @@ module.exports = {
 				'NODE_ENV': process.env.NODE_ENV ? `"${process.env.NODE_ENV}"` : JSON.stringify('production')
 			}
 		}),
-		new webpack.optimize.AggressiveMergingPlugin()
+		new webpack.optimize.AggressiveMergingPlugin(),
+		new MinifyPlugin(),
+		new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
 	]
 };

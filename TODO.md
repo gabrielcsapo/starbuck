@@ -1,3 +1,2 @@
 - [ ] memoize starbuck.getVersionInfo returns to reduce stress on npm
 - [ ] build a better main page
-- [ ] make github and gitlab endpoints configurable (be able to add authorization credentials)
