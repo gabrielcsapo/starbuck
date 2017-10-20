@@ -1,3 +1,7 @@
+# 0.1.1 (10/19/2017)
+
+- removes reference of original idea for name (helo) 
+
 # 0.1.0 (10/16/2017)
 
 - updates dependencies

@@ -1,6 +1,6 @@
 {
   "name": "starbuck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "📦 NPM dependency tracking server",
   "main": "index.js",
   "repository": {
@@ -28,7 +28,17 @@
     "starbuck": "./bin/index.js"
   },
   "engines": {
-    "node": ">= 6"
+    "node": ">= 8"
+  },
+  "dependencies": {
+    "async": "^2.5.0",
+    "express": "^4.16.2",
+    "memory-cache": "^0.2.0",
+    "nconf": "^0.8.5",
+    "npm": "^5.5.1",
+    "request": "^2.83.0",
+    "semver": "^5.4.1",
+    "serve-static": "^1.13.1"
   },
   "devDependencies": {
     "@storybook/react": "^3.2.12",
@@ -54,15 +64,5 @@
     "webpack": "^3.7.1",
     "webpack-dev-server": "^2.9.2",
     "whatwg-fetch": "^2.0.3"
-  },
-  "dependencies": {
-    "async": "^2.5.0",
-    "express": "^4.16.2",
-    "memory-cache": "^0.2.0",
-    "nconf": "^0.8.5",
-    "npm": "^5.5.1",
-    "request": "^2.83.0",
-    "semver": "^5.4.1",
-    "serve-static": "^1.13.1"
   }
 }
