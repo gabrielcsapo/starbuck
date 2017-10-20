@@ -2,7 +2,10 @@ const path = require('path');
 const express = require('express');
 const serveStatic = require('serve-static');
 const cache = require('memory-cache');
-const nconf = require('nconf').argv().env().file({ file: __dirname + '/config.json' });
+const nconf = require('nconf').argv().env({
+	separator: '__',
+	lowerCase: true
+}).file({ file: __dirname + '/config.json' });
 
 const { getDependencies } = require('./lib/starbuck');
 const { getBadge } = require('./lib/util');
