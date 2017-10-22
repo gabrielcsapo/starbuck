@@ -1,3 +1,9 @@
+# 0.1.3 (10/21/2017)
+
+- Overall site is using the correct `viewport` config which allows it to intelligently scale on devices
+- DependenciesTable empty value now shows `No ${name} Found` instead of `No Entries Found`
+- Dependencies page now has a better design on mobile and is more responsive.  
+
 # 0.1.2 (10/19/2017)
 
 - fixes overriding args, can be done like `github__token=hello npm start`

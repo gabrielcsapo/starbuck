@@ -1,8 +1,11 @@
 module.exports = {
 	title: 'starbuck',
 	description: '📦 NPM dependency tracking server',
-	sourceCodeLink: 'https://github.com/gabrielcsapo/starbuck',
-	downloadLink: 'https://github.com/gabrielcsapo/starbuck/releases',
 	icon: '',
-	demoImage: './example.png'
+	demoImage: './example.png',
+	links: {
+		Source: 'https://github.com/gabrielcsapo/starbuck',
+		Download: 'https://github.com/gabrielcsapo/starbuck/releases',
+		Storybook: './storybook/index.html'
+	}
 };

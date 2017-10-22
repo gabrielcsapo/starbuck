@@ -56,8 +56,8 @@ module.exports = {
 				'NODE_ENV': process.env.NODE_ENV ? `"${process.env.NODE_ENV}"` : JSON.stringify('production')
 			}
 		}),
-		new webpack.optimize.AggressiveMergingPlugin(),
 		new MinifyPlugin(),
+		new webpack.optimize.AggressiveMergingPlugin(),
 		new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
 	]
 };

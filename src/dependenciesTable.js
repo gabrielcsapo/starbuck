@@ -45,15 +45,15 @@ class DependenciesTable extends React.Component {
 		}, []);
 
 		return (
-			<div>
-				<div className="tab">
-					<button className={`tablinks ${selected === 'dependencies' ? 'active' : ''}`} onClick={this.changeTab.bind(this, 'dependencies')}>dependencies ({Object.keys(this.props['dependencies']).length})</button>
-					<button className={`tablinks ${selected === 'devDependencies' ? 'active' : ''}`} onClick={this.changeTab.bind(this, 'devDependencies')}>devDependencies ({Object.keys(this.props['devDependencies']).length})</button>
-					<button className={`tablinks ${selected === 'peerDependencies' ? 'active' : ''}`} onClick={this.changeTab.bind(this, 'peerDependencies')}>peerDependencies ({Object.keys(this.props['peerDependencies']).length})</button>
+			<div className="text-center">
+				<div className="btn-group">
+					<button className={`btn ${selected === 'dependencies' ? 'btn-primary' : 'btn-white'}`} onClick={this.changeTab.bind(this, 'dependencies')}>dependencies ({Object.keys(this.props['dependencies']).length})</button>
+					<button className={`btn ${selected === 'devDependencies' ? 'btn-primary' : 'btn-white'}`} onClick={this.changeTab.bind(this, 'devDependencies')}>devDependencies ({Object.keys(this.props['devDependencies']).length})</button>
+					<button className={`btn ${selected === 'peerDependencies' ? 'btn-primary' : 'btn-white'}`} onClick={this.changeTab.bind(this, 'peerDependencies')}>peerDependencies ({Object.keys(this.props['peerDependencies']).length})</button>
 				</div>
 				<br/>
 				<br/>
-				<table className="table responsive">
+				<table className="table">
 					<thead>
 						<tr>
 							<th onClick={this.setStort.bind(this, 'name')}>name {'name' == sort && direction == 1 ? '˄' : 'name' == sort && direction == -1 ? '˅' : ''}</th>
@@ -77,7 +77,7 @@ class DependenciesTable extends React.Component {
 							})
 							:
 							<tr>
-								<td colSpan="5" style={{ 'text-align': 'center', 'height': `${(window.innerHeight / 2)}px` }}> No Entries Found </td>
+								<td colSpan="5" style={{ 'text-align': 'center', 'height': `${(window.innerHeight / 2)}px` }}> No {selected} Found </td>
 							</tr>
 						}
 					</tbody>

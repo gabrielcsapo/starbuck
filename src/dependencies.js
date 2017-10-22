@@ -81,12 +81,14 @@ class Dependencies extends React.Component {
 				{ info
 					?
 					<div>
-						<h2> <a href={ `/${service}/${owner}` }>{service}/{owner}</a>/{ name } ({version || 'no version'}) </h2>
-						<small> <i> { description || 'no description' } </i> </small>
+						<div style={{ position: 'relative' }}>
+							<h2> <a href={ `/${service}/${owner}` }>{service}/{owner}</a>/{ name } ({version || 'no version'}) </h2>
+							<small> <i> { description || 'no description' } </i> </small>
+							<img src={`/badge/${service}/${owner}/${repo}/${badge}.svg`} style={{ position: 'absolute', right: 0, marginTop: '10px', marginBottom: '-10px' }}/>
+						</div>
 						<br/>
 						<hr/>
 						<br/>
-						<img src={`/badge/${service}/${owner}/${repo}/${badge}.svg`} style={{ float: 'right', marginTop: '25px' }}/>
 						<DependenciesTable {...starbuck} selectedTab={selectedTab} changeTab={this.changeTab.bind(this)}/>
 					</div>
 					:

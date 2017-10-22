@@ -1,6 +1,6 @@
 {
   "name": "starbuck",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "📦 NPM dependency tracking server",
   "main": "index.js",
   "repository": {
