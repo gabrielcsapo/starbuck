@@ -1,6 +1,6 @@
 import 'whatwg-fetch';
 
-import 'psychic-ui/dist/psychic-min.css';
+import 'psychic.css/dist/psychic.min.css';
 import './style.css';
 
 import { render } from 'react-dom';

@@ -1,3 +1,7 @@
+# 0.1.4 (10/23/2017)
+
+- updates ui framework
+
 # 0.1.3 (10/21/2017)
 
 - Overall site is using the correct `viewport` config which allows it to intelligently scale on devices
