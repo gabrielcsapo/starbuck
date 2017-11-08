@@ -19,7 +19,14 @@ npm install starbuck -g
 ## Usage
 
 ```
-starbuck
+Usage: starbuck [options]
+
+
+Options:
+
+  -V, --version          output the version number
+  -c, --config [config]  Specify a config file to override the defaults
+  -h, --help             output usage information
 ```
 
 This will start up a server at http://localhost:8000 and you should see a page similar to this.

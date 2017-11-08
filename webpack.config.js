@@ -3,9 +3,9 @@ const path = require('path');
 
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 
-module.exports = {
+const config = {
 	entry: {
-		app: './src/app.js',
+		app: ['psychic.css/dist/psychic.min.css', 'whatwg-fetch', './src/app.js'],
 		vendor: ['react', 'react-dom', 'react-router-dom', 'prop-types'],
 	},
 	output: {
@@ -56,8 +56,13 @@ module.exports = {
 				'NODE_ENV': process.env.NODE_ENV ? `"${process.env.NODE_ENV}"` : JSON.stringify('production')
 			}
 		}),
-		new MinifyPlugin(),
 		new webpack.optimize.AggressiveMergingPlugin(),
 		new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
 	]
 };
+
+if(process.env.NODE_ENV === 'production') {
+	config.plugins.push(new MinifyPlugin());
+}
+
+module.exports = config;

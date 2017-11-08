@@ -2,10 +2,30 @@ const path = require('path');
 const express = require('express');
 const serveStatic = require('serve-static');
 const cache = require('memory-cache');
-const nconf = require('nconf').argv().env({
+const nconf = require('nconf');
+
+nconf.defaults({
+	'github': {
+		'url': 'https://api.github.com',
+		'token': ''
+	},
+	'gitlab': {
+		'url': 'https://gitlab.com/api',
+		'token': ''
+	},
+	'npm': {
+		'url': 'http://registry.npmjs.org'
+	}
+});
+
+nconf.argv().env({
 	separator: '__',
 	lowerCase: true
-}).file({ file: __dirname + '/config.json' });
+});
+
+if(process.env.CONFIG) {
+	nconf.file({ file: path.resolve(process.env.CONFIG) });
+}
 
 const { getDependencies } = require('./lib/starbuck');
 const { getBadge } = require('./lib/util');
@@ -22,14 +42,34 @@ const asyncMiddleware = (fn) => {
 		Promise.resolve(fn(req, res, next)).catch(next);
 	};
 };
+const cacheMiddleware = (req, res, next) => {
+	const cached = cache.get(req.url);
+	if(cached) {
+		res.set(cached.headers);
+		res.send(cached.content);
+	} else {
+		res.cache = {
+			write: res.write,
+			end: res.end,
+			content: '',
+		};
+		res.end = function(content, encoding) {
+			cache.put(req.url, {
+				headers: res._headers,
+				content,
+				encoding
+			}, 900000);
+
+			return res.cache.end.apply(this, arguments);
+		};
+		next();
+	}
+};
 
 app.use(serveStatic('dist'));
 
-app.get('/api/:service/:owner/repos', asyncMiddleware(async (req, res) => {
+app.get('/api/:service/:owner/repos', cacheMiddleware, asyncMiddleware(async (req, res) => {
 	const { service, owner } = req.params;
-	if (cache.get(`${service}:${owner}:repos`)) {
-		return res.status(200).send(JSON.stringify(cache.get(`${service}:${owner}:repos`)));
-	}
 
 	let repos = {};
 	if(service === 'github') {
@@ -37,8 +77,6 @@ app.get('/api/:service/:owner/repos', asyncMiddleware(async (req, res) => {
 	} else {
 		repos = await gitlab.getRepos(owner);
 	}
-
-	cache.put(`${service}:${owner}:repos`, repos, 900000);
 
 	res.send(repos);
 }));
@@ -61,7 +99,7 @@ app.get('/api/:service/:owner/:repo', asyncMiddleware(async (req, res) => {
 	}
 
 	const dependencies = await getDependencies(pack, {
-		npm: 'http://registry.npmjs.org'
+		npm: nconf.get('npm').url
 	});
 	const response = Object.assign({ starbuck: dependencies }, pack);
 
@@ -70,79 +108,65 @@ app.get('/api/:service/:owner/:repo', asyncMiddleware(async (req, res) => {
 	res.status(200).send(JSON.stringify(response));
 }));
 
-app.get('/badge/:service/:owner/:repo/:status.svg', asyncMiddleware(async (req, res) => {
+app.get('/badge/:service/:owner/:repo/:status.svg', cacheMiddleware, asyncMiddleware(async (req, res) => {
 	const { service, owner, repo, status } = req.params;
 
-	if (supportedServices.indexOf(service) === -1) {
-		return res.status(500).send({ error: 'service not supported' });
-	}
-
-	if (supportedBadges.indexOf(status) === -1) {
-		return res.sendFile(getBadge('unknown', ''), {
-			lastModified: false,
-			etag: false,
-			headers: {
-				'Cache-Control': 'no-cache, no-store, must-revalidate',
-				'Expires': new Date().toUTCString()
-			}
-		});
-	}
-
 	async function get() {
-		if (cache.get(`${service}:${owner}:${repo}`)) {
-			return cache.get(`${service}:${owner}:${repo}`);
-		}
-
 		let pack = {};
+
 		if(service === 'github') {
 			pack = await github.getPackage(owner, repo);
 		} else {
 			pack = await gitlab.getPackage(owner, repo);
 		}
 		const dependencies = await getDependencies(pack, {
-			npm: 'http://registry.npmjs.org'
+			npm: nconf.get('npm').url
 		});
-		const response = Object.assign({ starbuck: dependencies }, pack);
 
-		cache.put(`${service}:${owner}:${repo}`, response, 900000);
-
-		return response;
+		return Object.assign({ starbuck: dependencies }, pack);
 	}
 
-	const response = await get();
-	let dep = {
-		'dev-status': 'devDependencies',
-		'status': 'dependencies',
-		'peer-status': 'peerDependencies'
-	}[status];
+	try {
 
-	let dependencies = response.starbuck[dep];
-
-	let type;
-	if (Object.keys(dependencies).length === 0) {
-		type = 'none';
-	} else if (Object.keys(dependencies).filter((d) => dependencies[d].needsUpdating).length > 0) {
-		type = 'notsouptodate';
-	} else {
-		type = 'uptodate';
-	}
-
-	res.sendFile(getBadge(type, dep), {
-		lastModified: false,
-		etag: false,
-		headers: {
-			'Cache-Control': 'no-cache, no-store, must-revalidate',
-			'Expires': new Date().toUTCString()
+		if (supportedServices.indexOf(service) === -1) {
+			return res.status(500).send({ error: 'service not supported' });
 		}
-	});
+
+		if (supportedBadges.indexOf(status) === -1) {
+			return res.send(await getBadge('unknown', 'invalid'));
+		}
+
+		const response = await get();
+		let dep = {
+			'dev-status': 'devDependencies',
+			'status': 'dependencies',
+			'peer-status': 'peerDependencies'
+		}[status];
+
+		let dependencies = response.starbuck[dep];
+
+		let type;
+		if (Object.keys(dependencies).length === 0) {
+			type = 'none';
+		} else if (Object.keys(dependencies).filter((d) => dependencies[d].needsUpdating).length > 0) {
+			type = 'notsouptodate';
+		} else {
+			type = 'uptodate';
+		}
+
+		res.setHeader('Content-Type', 'image/svg+xml');
+		res.send(await getBadge(type, dep));
+	} catch(ex) {
+		return res.send(await getBadge('unknown', status));
+	}
 }));
 
 app.get('*', (req, res) => {
 	res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
 
-app.use(function (err, req, res) {
-	res.status(500).send({ error: err.toString() });
+app.use(function (error, req, res) {
+	res.status(500).send({ error: error.toString() });
 });
 
 app.listen(port, () => {

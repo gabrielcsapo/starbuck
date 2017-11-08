@@ -1,3 +1,10 @@
+# 0.1.5 (10/23/2017)
+
+- uses badgeit to create and serve badges instead of static assets
+- properly handles errors from the UI
+- caches at the routing level, much more reliable
+- gets npm url from config file, can be overridden from override file or environment variable
+
 # 0.1.4 (10/23/2017)
 
 - updates ui framework

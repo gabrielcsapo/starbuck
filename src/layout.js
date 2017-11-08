@@ -11,8 +11,7 @@ class Layout extends React.Component {
 					<div className="container">
 						<div className="navbar-title">
 							<a className="text-black" href="/" style={{ 'width': '120px' }}>
-								<img src="/img/logo.svg" style={{ 'display': 'inline-block', 'width': '35px' }}/>
-								<span className="text-black">&nbsp;STARBUCK</span>
+								<img src="/logo.svg" style={{ 'display': 'inline-block', 'width': '35px' }}/>
 							</a>
 						</div>
 						<div className="nav"></div>
