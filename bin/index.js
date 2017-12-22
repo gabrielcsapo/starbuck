@@ -43,10 +43,7 @@ Options:
 	}
 });
 
-const {
-	config,
-	port = 8000
-} = program;
+const { config, port=process.env.PORT || 8000 } = program;
 
 (async function() {
 	try {

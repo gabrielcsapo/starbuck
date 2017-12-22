@@ -1,3 +1,7 @@
+# 0.2.1 (12/12/2017)
+
+- ensures process.env.PORT will effect the app on startup
+
 # 0.2.0 (12/12/2017)
 
 - don't cache anything that isn't a statusCode 200
