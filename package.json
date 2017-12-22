@@ -19,7 +19,7 @@
     "coverage": "tap test/*.js --coverage --coverage-report=lcov",
     "build": "webpack --progress",
     "dev": "webpack-dev-server --hot",
-    "start": "node index.js",
+    "start": "./bin/index.js",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook --output-dir=./docs/storybook",
     "generate-docs": "tryitout"
