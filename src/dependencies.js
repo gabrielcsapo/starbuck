@@ -61,14 +61,22 @@ class Dependencies extends React.Component {
 		}
 
 		if(error) {
-			return (<div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top':'50%', 'transform': 'translateY(-50%)' }}>
-				Something has gone wrong, please open an issue <a href="https://github.com/gabrielcsapo/starbuck/issues">here</a>
-				<br/>
-				<br/>
-				<pre style={{ width: '80%', margin: '0 auto', border: '1px solid rgba(162, 162, 162, 0.64)' }}>
-					{ error.toString() }
-				</pre>
-			</div>);
+			if(error == 'could not find package') {
+				return <div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top':'50%', 'transform': 'translateY(-50%)' }}>
+					☁️ The package { repo } for { owner } could not be found.
+					<br/>
+					Good news is, you can make one! 🔧
+				</div>;
+			} else {
+				return (<div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top':'50%', 'transform': 'translateY(-50%)' }}>
+					Something has gone wrong, please open an issue <a href="https://github.com/gabrielcsapo/starbuck/issues">here</a>
+					<br/>
+					<br/>
+					<pre style={{ width: '80%', margin: '0 auto', border: '1px solid rgba(162, 162, 162, 0.64)' }}>
+						{ error.toString() }
+					</pre>
+				</div>);
+			}
 		}
 
 		const { name, description, version, starbuck } = info;

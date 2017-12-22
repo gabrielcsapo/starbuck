@@ -1,3 +1,13 @@
+# 0.2.0 (12/12/2017)
+
+- don't cache anything that isn't a statusCode 200
+- removes commander
+- ./index or starbuck now responds with a promise when executed
+- adds option to pass in a specific port `-p, --port [port]`
+- updates dependencies
+- when package is not found, throw up a page that actually highlights that, instead of the generic error page
+- updates main page to show example of how to use the service
+
 # 0.1.5 (10/23/2017)
 
 - uses badgeit to create and serve badges instead of static assets

@@ -1,6 +1,6 @@
 webpackJsonp([0],{
 
-/***/ 15:
+/***/ 14:
 /***/ (function(module, exports) {
 
 /*
@@ -83,7 +83,7 @@ function toComment(sourceMap) {
 
 /***/ }),
 
-/***/ 16:
+/***/ 15:
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -139,7 +139,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(31);
+var	fixUrls = __webpack_require__(30);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -152,7 +152,7 @@ module.exports = function(list, options) {
 
 	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
 	// tags it will allow on a page
-	if (!options.singleton) options.singleton = isOldIE();
+	if (!options.singleton && typeof options.singleton !== "boolean") options.singleton = isOldIE();
 
 	// By default, add <style> tags to the <head> element
 	if (!options.insertInto) options.insertInto = "head";
@@ -456,23 +456,23 @@ function updateLink (link, options, obj) {
 
 /***/ }),
 
-/***/ 28:
+/***/ 27:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(29);
-__webpack_require__(32);
-module.exports = __webpack_require__(33);
+__webpack_require__(28);
+__webpack_require__(31);
+module.exports = __webpack_require__(32);
 
 
 /***/ }),
 
-/***/ 29:
+/***/ 28:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(30);
+var content = __webpack_require__(29);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -480,7 +480,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(15)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -498,10 +498,10 @@ if(false) {
 
 /***/ }),
 
-/***/ 30:
+/***/ 29:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(true);
+exports = module.exports = __webpack_require__(14)(true);
 // imports
 
 
@@ -513,7 +513,7 @@ exports.push([module.i, "@-moz-keyframes rotation{0%{transform:rotate(0deg)}to{t
 
 /***/ }),
 
-/***/ 31:
+/***/ 30:
 /***/ (function(module, exports) {
 
 
@@ -609,7 +609,7 @@ module.exports = function (css) {
 
 /***/ }),
 
-/***/ 32:
+/***/ 31:
 /***/ (function(module, exports) {
 
 (function(self) {
@@ -1077,35 +1077,33 @@ module.exports = function (css) {
 
 /***/ }),
 
-/***/ 33:
+/***/ 32:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(34);
+__webpack_require__(33);
 
-var _reactDom = __webpack_require__(17);
+var _reactDom = __webpack_require__(16);
 
-var _router = __webpack_require__(46);
+var _router = __webpack_require__(45);
 
 var _router2 = _interopRequireDefault(_router);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var mountNode = document.body;
-
-(0, _reactDom.render)(_router2.default, mountNode);
+(0, _reactDom.render)(_router2.default, document.body);
 
 /***/ }),
 
-/***/ 34:
+/***/ 33:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(35);
+var content = __webpack_require__(34);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1113,7 +1111,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(15)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -1131,10 +1129,10 @@ if(false) {
 
 /***/ }),
 
-/***/ 35:
+/***/ 34:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(true);
+exports = module.exports = __webpack_require__(14)(true);
 // imports
 
 
@@ -1146,7 +1144,7 @@ exports.push([module.i, "* {\n  font-family: Open Sans, sans-serif\n}\n\n.navbar
 
 /***/ }),
 
-/***/ 46:
+/***/ 45:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1160,7 +1158,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterDom = __webpack_require__(20);
+var _reactRouterDom = __webpack_require__(19);
 
 var _layout = __webpack_require__(75);
 
@@ -1309,40 +1307,79 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Main = function (_React$Component) {
 	_inherits(Main, _React$Component);
 
-	function Main() {
+	function Main(props) {
 		_classCallCheck(this, Main);
 
-		return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+
+		_this.state = {
+			exampleLink: location.href + 'badge/:service/:repo/:type.svg'
+		};
+		return _this;
 	}
 
 	_createClass(Main, [{
-		key: "render",
+		key: 'toggleLink',
+		value: function toggleLink(link) {
+			this.setState({
+				exampleLink: typeof link == 'string' ? link : location.href + 'badge/:service/:repo/:type.svg'
+			});
+		}
+	}, {
+		key: 'render',
 		value: function render() {
+			var exampleLink = this.state.exampleLink;
+			var _document = document,
+			    location = _document.location;
+
+
 			return _react2.default.createElement(
-				"div",
-				{ className: "center" },
-				_react2.default.createElement("img", { src: "/logo.svg", style: { 'display': 'inline-block', 'width': '35px' } }),
+				'div',
+				{ className: 'center' },
+				_react2.default.createElement('img', { src: '/logo.svg', style: { 'display': 'inline-block', 'width': '35px' } }),
 				_react2.default.createElement(
-					"h3",
-					{ className: "text-black" },
-					"\xA0STARBUCK"
+					'h3',
+					{ className: 'text-black' },
+					'\xA0STARBUCK'
 				),
 				_react2.default.createElement(
-					"small",
+					'small',
 					null,
-					"NPM dependency tracking server"
+					'NPM dependency tracking server'
 				),
-				_react2.default.createElement("br", null),
-				_react2.default.createElement("br", null),
+				_react2.default.createElement('br', null),
 				_react2.default.createElement(
-					"a",
-					{ className: "btn", href: "https://github.com/gabrielcsapo/starbuck", target: "_blank", rel: "noopener noreferrer" },
-					"Source"
+					'pre',
+					null,
+					'<img src=',
+					exampleLink,
+					'/>'
 				),
 				_react2.default.createElement(
-					"a",
-					{ className: "btn", href: "https://github.com/gabrielcsapo/starbuck/releases", target: "_blank", rel: "noopener noreferrer" },
-					"Releases"
+					'a',
+					{ style: { paddingRight: '2px' }, href: '/github/gabrielcsapo/starbuck', onMouseEnter: this.toggleLink.bind(this, location.href + 'badge/github/gabrielcsapo/dev-status.svg'), onMouseLeave: this.toggleLink.bind(this) },
+					_react2.default.createElement('img', { src: '/badge/github/gabrielcsapo/starbuck/dev-status.svg' })
+				),
+				_react2.default.createElement(
+					'a',
+					{ style: { paddingRight: '2px' }, href: '/github/gabrielcsapo/starbuck', onMouseEnter: this.toggleLink.bind(this, location.href + 'badge/github/gabrielcsapo/status.svg'), onMouseLeave: this.toggleLink.bind(this) },
+					_react2.default.createElement('img', { src: '/badge/github/gabrielcsapo/starbuck/status.svg' })
+				),
+				_react2.default.createElement(
+					'a',
+					{ style: { paddingRight: '2px' }, href: '/github/gabrielcsapo/starbuck', onMouseEnter: this.toggleLink.bind(this, location.href + 'badge/github/gabrielcsapo/peer-status.svg'), onMouseLeave: this.toggleLink.bind(this) },
+					_react2.default.createElement('img', { src: '/badge/github/gabrielcsapo/starbuck/peer-status.svg' })
+				),
+				_react2.default.createElement('br', null),
+				_react2.default.createElement(
+					'a',
+					{ className: 'btn', href: 'https://github.com/gabrielcsapo/starbuck', target: '_blank', rel: 'noopener noreferrer' },
+					'Source'
+				),
+				_react2.default.createElement(
+					'a',
+					{ className: 'btn', href: 'https://github.com/gabrielcsapo/starbuck/releases', target: '_blank', rel: 'noopener noreferrer' },
+					'Releases'
 				)
 			);
 		}
@@ -1648,23 +1685,37 @@ var Dependencies = function (_React$Component) {
 			}
 
 			if (error) {
-				return _react2.default.createElement(
-					'div',
-					{ style: { 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' } },
-					'Something has gone wrong, please open an issue ',
-					_react2.default.createElement(
-						'a',
-						{ href: 'https://github.com/gabrielcsapo/starbuck/issues' },
-						'here'
-					),
-					_react2.default.createElement('br', null),
-					_react2.default.createElement('br', null),
-					_react2.default.createElement(
-						'pre',
-						{ style: { width: '80%', margin: '0 auto', border: '1px solid rgba(162, 162, 162, 0.64)' } },
-						error.toString()
-					)
-				);
+				if (error == 'could not find package') {
+					return _react2.default.createElement(
+						'div',
+						{ style: { 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' } },
+						'\u2601\uFE0F The package ',
+						repo,
+						' for ',
+						owner,
+						' could not be found.',
+						_react2.default.createElement('br', null),
+						'Good news is, you can make one! \uD83D\uDD27'
+					);
+				} else {
+					return _react2.default.createElement(
+						'div',
+						{ style: { 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' } },
+						'Something has gone wrong, please open an issue ',
+						_react2.default.createElement(
+							'a',
+							{ href: 'https://github.com/gabrielcsapo/starbuck/issues' },
+							'here'
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement(
+							'pre',
+							{ style: { width: '80%', margin: '0 auto', border: '1px solid rgba(162, 162, 162, 0.64)' } },
+							error.toString()
+						)
+					);
+				}
 			}
 
 			var name = info.name,
@@ -1985,4 +2036,4 @@ exports.default = DependenciesTable;
 
 /***/ })
 
-},[28]);
+},[27]);

@@ -21,14 +21,15 @@ npm install starbuck -g
 ```
 Usage: starbuck [options]
 
+Commands:
+  -h, --help, help                Output usage information
+  -v, --version, version          Output the version number
 
 Options:
-
-  -V, --version          output the version number
-  -c, --config [config]  Specify a config file to override the defaults
-  -h, --help             output usage information
+  -c, --config [path]            Specify a config file to override the defaults
+  -p, --port [port]            	 Should override the default port
 ```
 
-This will start up a server at http://localhost:8000 and you should see a page similar to this.
+Running `starbuck` will start up a server at http://localhost:8000 and you should see a page similar to this.
 
 ![main](./docs/main.png)

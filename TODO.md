@@ -1,2 +1,0 @@
-- [ ] memoize starbuck.getVersionInfo returns to reduce stress on npm
-- [ ] build a better main page
