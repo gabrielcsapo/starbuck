@@ -59,7 +59,7 @@ class User extends Component {
 
     if (loading) {
       return (<div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' }}>
-				Loading...
+        Loading...
       </div>)
     }
 

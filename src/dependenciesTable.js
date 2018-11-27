@@ -69,7 +69,7 @@ class DependenciesTable extends Component {
           </thead>
           <tbody>
             { dependencies.length > 0
-              ?							this.sort(sort, direction, dependencies).map((dep, i) => {
+              ? this.sort(sort, direction, dependencies).map((dep, i) => {
                 return (<tr key={i}>
                   <td>{dep['name']}</td>
                   <td>{dep['required']}</td>
@@ -78,7 +78,7 @@ class DependenciesTable extends Component {
                   <td><span className={dep['needsUpdating'] ? 'status-notupdated' : 'status-updated'} /></td>
                 </tr>)
               })
-              :							<tr>
+              : <tr>
                 <td colSpan='5' style={{ 'text-align': 'center', 'height': `${(window.innerHeight / 2)}px` }}> No {selected} Found </td>
               </tr>
             }

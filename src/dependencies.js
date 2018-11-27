@@ -56,20 +56,20 @@ class Dependencies extends Component {
 
     if (loading) {
       return (<div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' }}>
-				Loading...
+  Loading...
       </div>)
     }
 
     if (error) {
       if (error === 'could not find package') {
         return <div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' }}>
-					☁️ The package { repo } for { owner } could not be found.
+  ☁️ The package { repo } for { owner } could not be found.
           <br />
-					Good news is, you can make one! 🔧
+  Good news is, you can make one! 🔧
         </div>
       } else {
         return (<div style={{ 'textAlign': 'center', 'width': '100%', 'position': 'absolute', 'top': '50%', 'transform': 'translateY(-50%)' }}>
-					Something has gone wrong, please open an issue <a href='https://github.com/gabrielcsapo/starbuck/issues'>here</a>
+  Something has gone wrong, please open an issue <a href='https://github.com/gabrielcsapo/starbuck/issues'>here</a>
           <br />
           <br />
           <pre style={{ width: '80%', margin: '0 auto', border: '1px solid rgba(162, 162, 162, 0.64)' }}>

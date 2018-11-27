@@ -27,9 +27,9 @@ const cli = woof(`
   }
 })
 
-if(cli.help || cli.version) process.exit(0)
+if (cli.help || cli.version) process.exit(0)
 
-if(cli.config) {
+if (cli.config) {
   cli.config = require(path.resolve(process.cwd(), cli.config))
 }
 

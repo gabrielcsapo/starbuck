@@ -1,3 +1,7 @@
+# 0.3.1 (11/27/2018)
+
+- fix linting errors
+
 # 0.3.0 (11/26/2018)
 
 - adds user-prompt component to show users how to get to their page

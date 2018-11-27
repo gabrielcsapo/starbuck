@@ -34,7 +34,7 @@ class Main extends Component {
           <small>NPM dependency tracking server</small>
           <br />
           <pre>
-  					&lt;img src={exampleLink}/&gt;
+            &lt;img src={exampleLink}/&gt;
           </pre>
           <a style={{ paddingRight: '2px' }} href='/github/gabrielcsapo/starbuck' onMouseEnter={this.toggleLink.bind(this, `${location.href}badge/github/gabrielcsapo/dev-status.svg`)} onMouseLeave={this.toggleLink.bind(this)}>
             <img src='/badge/github/gabrielcsapo/starbuck/dev-status.svg' />
