@@ -2,28 +2,8 @@
   font-family: Open Sans, sans-serif
 }
 
-.navbar {
-  background-color: white;
-  border-top: 5px solid #222;
-  border-bottom: 2px solid #ddd;
-}
 body {
   margin-bottom: 50px;
-}
-.content {
-  margin-top: 50px;
-}
-.center {
-  text-align: center;
-  width: 50%;
-  position: absolute;
-  left: 25%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.btn-group > .btn {
-  border-radius: 0 !important;
 }
 
 table {
@@ -31,6 +11,16 @@ table {
   max-width: 100%;
   width: 100%;
   display: table;
+}
+
+.navbar {
+  background-color: white;
+  border-top: 5px solid #222;
+  border-bottom: 2px solid #ddd;
+}
+
+.btn-group > .btn {
+  border-radius: 0 !important;
 }
 
 .status-updated {
@@ -42,6 +32,7 @@ table {
 	-webkit-border-radius: 15px;
 	border-radius: 15px;
 }
+
 .status-notupdated {
   width: 15px;
 	height: 15px;

@@ -1,7 +1,7 @@
-import './style.css';
+import './style.css'
 
-import { render } from 'react-dom';
+import { render } from 'react-dom'
 
-import routes from './router';
+import routes from './router'
 
-render(routes, document.body);
+render(routes, document.body)

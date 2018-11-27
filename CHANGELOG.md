@@ -1,3 +1,10 @@
+# 0.3.0 (11/26/2018)
+
+- adds user-prompt component to show users how to get to their page
+- remove unnecessary package
+- uses `woof` to parse argv
+- updates `webpack@3` -> `webpack@4`
+
 # 0.2.1 (12/12/2017)
 
 - ensures process.env.PORT will effect the app on startup

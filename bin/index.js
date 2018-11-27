@@ -1,54 +1,42 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const starbuck = require('../index.js');
+const path = require('path')
+const woof = require('woof')
+const starbuck = require('../index.js')
 
-const args = process.argv.slice(2);
+const cli = woof(`
+  Usage: starbuck [options]
 
-let program = {};
+  Commands:
+    -h, --help, help                Output usage information
+    -v, --version, version          Output the version number
 
-args.forEach((arg, i) => {
-	switch (arg) {
-	case '-v':
-	case '--version':
-	case 'version':
-      console.log(`v${require('../package.json').version}`); // eslint-disable-line
-		process.exit(0);
-		break;
-	case '-h':
-	case '--help':
-	case 'help':
-      console.log(`` + // eslint-disable-line
-        `
-Usage: starbuck [options]
+  Options:
+    -c, --config [path]             Specify a config file to override the defaults
+    -p, --port [port]               Should override the default port
+`, {
+  flags: {
+    config: {
+      default: '',
+      alias: 'c'
+    },
+    port: {
+      default: process.env.PORT || 8000,
+      alias: 'p'
+    }
+  }
+})
 
-Commands:
-  -h, --help, help                Output usage information
-  -v, --version, version          Output the version number
+if(cli.help || cli.version) process.exit(0)
 
-Options:
-  -c, --config [path]            Specify a config file to override the defaults
-  -p, --port [port]            	 Should override the default port
-`);
-		process.exit(0);
-		break;
-	case '-c':
-	case '--config':
-		program['config'] = path.resolve(process.cwd(), args[i + 1]);
-		break;
-	case '-p':
-	case '--port':
-		program['port'] = args[i + 1];
-		break;
-	}
-});
+if(cli.config) {
+  cli.config = require(path.resolve(process.cwd(), cli.config))
+}
 
-const { config, port=process.env.PORT || 8000 } = program;
-
-(async function() {
-	try {
-		await starbuck(config ? require(config) : undefined, port);
-	} catch (ex) {
+(async function () {
+  try {
+    await starbuck(cli.config || {}, cli.port)
+  } catch (ex) {
     console.error(`starbuck was unable to start \n ${ex.stack}`); // eslint-disable-line
-	}
-}());
+  }
+}())

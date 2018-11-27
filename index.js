@@ -1,192 +1,195 @@
-const path = require('path');
-const express = require('express');
-const serveStatic = require('serve-static');
-const cache = require('memory-cache');
-const nconf = require('nconf');
+const path = require('path')
+const express = require('express')
+const serveStatic = require('serve-static')
+const cache = require('memory-cache')
+const nconf = require('nconf')
 
-module.exports = function starbuck(config, port) {
-	return new Promise(function(resolve, reject) {
-		try {
-			nconf.defaults({
-				'github': {
-					'url': 'https://api.github.com',
-					'token': ''
-				},
-				'gitlab': {
-					'url': 'https://gitlab.com/api',
-					'token': ''
-				},
-				'npm': {
-					'url': 'http://registry.npmjs.org'
-				}
-			});
+const { getDependencies } = require('./lib/starbuck')
+const { getBadge } = require('./lib/util')
+const Github = require('./lib/github')
+const Gitlab = require('./lib/gitlab')
 
-			nconf.argv().env({
-				separator: '__',
-				lowerCase: true
-			});
+const supportedServices = ['gitlab', 'github']
+const supportedBadges = ['dev-status', 'status', 'peer-status']
 
-			nconf.overrides(config);
+module.exports = function starbuck (config, port) {
+  return new Promise(function (resolve, reject) {
+    try {
+      nconf.defaults({
+        'github': {
+          'url': 'https://api.github.com',
+          'token': ''
+        },
+        'gitlab': {
+          'url': 'https://gitlab.com/api',
+          'token': ''
+        },
+        'npm': {
+          'url': 'http://registry.npmjs.org'
+        }
+      })
 
-			const { getDependencies } = require('./lib/starbuck');
-			const { getBadge } = require('./lib/util');
-			const github = require('./lib/github')(nconf.get('github'));
-			const gitlab = require('./lib/gitlab')(nconf.get('gitlab'));
+      nconf.argv().env({
+        separator: '__',
+        lowerCase: true
+      })
 
-			const supportedServices = ['gitlab', 'github'];
-			const supportedBadges = ['dev-status', 'status', 'peer-status'];
+      nconf.overrides(config)
 
-			const app = express();
-			const asyncMiddleware = (fn) => {
-				return (req, res, next) => {
-					Promise.resolve(fn(req, res, next)).catch(next);
-				};
-			};
-			const cacheMiddleware = (req, res, next) => {
-				const cached = cache.get(req.url);
-				if(cached) {
-					res.set(cached.headers);
-					res.send(cached.content);
-				} else {
-					res.cache = {
-						write: res.write,
-						end: res.end,
-						content: '',
-					};
-					res.end = function(content, encoding) {
-						if(res.statusCode !== 200) return res.cache.end.apply(this, arguments); // don't cache
+      const github = Github(nconf.get('github'))
+      const gitlab = Gitlab(nconf.get('gitlab'))
 
-						cache.put(req.url, {
-							headers: res._headers,
-							content,
-							encoding
-						}, 900000);
+      const app = express()
+      const asyncMiddleware = (fn) => {
+        return (req, res, next) => {
+          Promise.resolve(fn(req, res, next)).catch(next)
+        }
+      }
+      const cacheMiddleware = (req, res, next) => {
+        const cached = cache.get(req.url)
+        if (cached) {
+          res.set(cached.headers)
+          res.send(cached.content)
+        } else {
+          res.cache = {
+            write: res.write,
+            end: res.end,
+            content: ''
+          }
+          res.end = function (content, encoding) {
+            if (res.statusCode !== 200) return res.cache.end.apply(this, arguments) // don't cache
 
-						return res.cache.end.apply(this, arguments);
-					};
-					next();
-				}
-			};
+            cache.put(req.url, {
+              headers: res._headers,
+              content,
+              encoding
+            }, 900000)
 
-			app.use(serveStatic('dist'));
+            return res.cache.end.apply(this, arguments)
+          }
+          next()
+        }
+      }
 
-			app.get('/api/:service/:owner/repos', cacheMiddleware, asyncMiddleware(async (req, res) => {
-				const { service, owner } = req.params;
+      app.use(serveStatic('dist'))
 
-				let repos = {};
-				if(service === 'github') {
-					repos = await github.getRepos(owner);
-				} else {
-					repos = await gitlab.getRepos(owner);
-				}
+      app.get('/api/:service/:owner/repos', cacheMiddleware, asyncMiddleware(async (req, res) => {
+        const { service, owner } = req.params
 
-				res.send(repos);
-			}));
+        let repos = {}
+        if (service === 'github') {
+          repos = await github.getRepos(owner)
+        } else {
+          repos = await gitlab.getRepos(owner)
+        }
 
-			app.get('/api/:service/:owner/:repo', asyncMiddleware(async (req, res) => {
-				const { service, owner, repo } = req.params;
-				if (supportedServices.indexOf(service) === -1) {
-					return res.status(500).send({ error: 'service not supported' });
-				}
+        res.send(repos)
+      }))
 
-				if (cache.get(`${service}:${owner}:${repo}`)) {
-					return res.status(200).send(JSON.stringify(cache.get(`${service}:${owner}:${repo}`)));
-				}
+      app.get('/api/:service/:owner/:repo', asyncMiddleware(async (req, res) => {
+        const { service, owner, repo } = req.params
+        if (supportedServices.indexOf(service) === -1) {
+          return res.status(500).send({ error: 'service not supported' })
+        }
 
-				let pack = {};
-				let dependencies = {};
+        if (cache.get(`${service}:${owner}:${repo}`)) {
+          return res.status(200).send(JSON.stringify(cache.get(`${service}:${owner}:${repo}`)))
+        }
 
-				try {
-					if(service === 'github') {
-						pack = await github.getPackage(owner, repo);
-					} else {
-						pack = await gitlab.getPackage(owner, repo);
-					}
+        let pack = {}
+        let dependencies = {}
 
-					dependencies = await getDependencies(pack, {
-						npm: nconf.get('npm').url
-					});
-				} catch(ex) {
-					return res.status(500).send(JSON.stringify({
-						error: 'could not find package'
-					}));
-				}
+        try {
+          if (service === 'github') {
+            pack = await github.getPackage(owner, repo)
+          } else {
+            pack = await gitlab.getPackage(owner, repo)
+          }
 
-				const response = Object.assign({ starbuck: dependencies }, pack);
+          dependencies = await getDependencies(pack, {
+            npm: nconf.get('npm').url
+          })
+        } catch (ex) {
+          return res.status(500).send(JSON.stringify({
+            error: 'could not find package'
+          }))
+        }
 
-				cache.put(`${service}:${owner}:${repo}`, response, 900000);
+        const response = Object.assign({ starbuck: dependencies }, pack)
 
-				res.status(200).send(JSON.stringify(response));
-			}));
+        cache.put(`${service}:${owner}:${repo}`, response, 900000)
 
-			app.get('/badge/:service/:owner/:repo/:status.svg', cacheMiddleware, asyncMiddleware(async (req, res) => {
-				const { service, owner, repo, status } = req.params;
+        res.status(200).send(JSON.stringify(response))
+      }))
 
-				async function get() {
-					let pack = {};
+      app.get('/badge/:service/:owner/:repo/:status.svg', cacheMiddleware, asyncMiddleware(async (req, res) => {
+        const { service, owner, repo, status } = req.params
 
-					if(service === 'github') {
-						pack = await github.getPackage(owner, repo);
-					} else {
-						pack = await gitlab.getPackage(owner, repo);
-					}
-					const dependencies = await getDependencies(pack, {
-						npm: nconf.get('npm').url
-					});
+        async function get () {
+          let pack = {}
 
-					return Object.assign({ starbuck: dependencies }, pack);
-				}
+          if (service === 'github') {
+            pack = await github.getPackage(owner, repo)
+          } else {
+            pack = await gitlab.getPackage(owner, repo)
+          }
+          const dependencies = await getDependencies(pack, {
+            npm: nconf.get('npm').url
+          })
 
-				try {
+          return Object.assign({ starbuck: dependencies }, pack)
+        }
 
-					if (supportedServices.indexOf(service) === -1) {
-						return res.status(500).send({ error: 'service not supported' });
-					}
+        try {
+          if (supportedServices.indexOf(service) === -1) {
+            return res.status(500).send({ error: 'service not supported' })
+          }
 
-					if (supportedBadges.indexOf(status) === -1) {
-						return res.send(await getBadge('unknown', 'invalid'));
-					}
+          if (supportedBadges.indexOf(status) === -1) {
+            return res.send(await getBadge('unknown', 'invalid'))
+          }
 
-					const response = await get();
-					let dep = {
-						'dev-status': 'devDependencies',
-						'status': 'dependencies',
-						'peer-status': 'peerDependencies'
-					}[status];
+          const response = await get()
 
-					let dependencies = response.starbuck[dep];
+          let dep = {
+            'dev-status': 'devDependencies',
+            'status': 'dependencies',
+            'peer-status': 'peerDependencies'
+          }[status]
 
-					let type;
-					if (Object.keys(dependencies).length === 0) {
-						type = 'none';
-					} else if (Object.keys(dependencies).filter((d) => dependencies[d].needsUpdating).length > 0) {
-						type = 'notsouptodate';
-					} else {
-						type = 'uptodate';
-					}
+          let dependencies = response.starbuck[dep]
 
-					res.setHeader('Content-Type', 'image/svg+xml');
-					res.send(await getBadge(type, dep));
-				} catch(ex) {
-					return res.send(await getBadge('unknown', status));
-				}
-			}));
+          let type
 
-			app.get('*', (req, res) => {
-				res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
-			});
+          if (Object.keys(dependencies).length === 0) {
+            type = 'none'
+          } else if (Object.keys(dependencies).filter((d) => dependencies[d].needsUpdating).length > 0) {
+            type = 'notsouptodate'
+          } else {
+            type = 'uptodate'
+          }
 
-			app.use((error, req, res) => {
-				res.status(500).send({ error: error.toString() });
-			});
+          res.setHeader('Content-Type', 'image/svg+xml')
+          res.send(await getBadge(type, dep))
+        } catch (ex) {
+          return res.send(await getBadge('unknown', status))
+        }
+      }))
 
-			app.listen(port, () => {
+      app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
+      })
+
+      app.use((error, req, res) => {
+        res.status(500).send({ error: error.toString() })
+      })
+
+      app.listen(port, () => {
 				console.log(`starbuck listening at http://localhost:${port}`); // eslint-disable-line
-				resolve();
-			});
-
-		} catch(ex) {
-			reject(ex);
-		}
-	});
-};
+        resolve()
+      })
+    } catch (ex) {
+      reject(ex)
+    }
+  })
+}
