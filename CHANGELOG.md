@@ -1,3 +1,8 @@
+# 0.4.0 (05/14/2019)
+
+- moves from npm to pacote
+- bumps dependencies
+
 # 0.3.1 (11/27/2018)
 
 - fix linting errors

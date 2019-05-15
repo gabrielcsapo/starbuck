@@ -15,26 +15,26 @@ const supportedBadges = ['dev-status', 'status', 'peer-status']
 module.exports = function starbuck (config, port) {
   return new Promise(function (resolve, reject) {
     try {
-      nconf.defaults({
-        'github': {
-          'url': 'https://api.github.com',
-          'token': ''
-        },
-        'gitlab': {
-          'url': 'https://gitlab.com/api',
-          'token': ''
-        },
-        'npm': {
-          'url': 'http://registry.npmjs.org'
-        }
-      })
-
-      nconf.argv().env({
-        separator: '__',
-        lowerCase: true
-      })
-
-      nconf.overrides(config)
+      nconf
+        .argv()
+        .env({
+          separator: '__',
+          lowerCase: true
+        })
+        .defaults({
+          'github': {
+            'url': 'https://api.github.com',
+            'token': ''
+          },
+          'gitlab': {
+            'url': 'https://gitlab.com/api',
+            'token': ''
+          },
+          'npm': {
+            'url': 'http://registry.npmjs.org'
+          }
+        })
+        .overrides(config)
 
       const github = Github(nconf.get('github'))
       const gitlab = Gitlab(nconf.get('gitlab'))
