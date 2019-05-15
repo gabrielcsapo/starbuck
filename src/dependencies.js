@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import DependenciesTable from './DependenciesTable'
+import DependenciesTable from './dependenciesTable'
 
 class Dependencies extends Component {
   constructor (props) {

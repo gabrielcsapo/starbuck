@@ -1,3 +1,7 @@
+# 0.4.1 (05/14/2019)
+
+- fixes import statement to use the correct casing (effects unix systems)
+
 # 0.4.0 (05/14/2019)
 
 - moves from npm to pacote
